@@ -1,6 +1,8 @@
 declare global {
   interface Window {
     // electron: ElectronAPI
-    context: none
+    context: {
+      locale: string
+    }
   }
 }

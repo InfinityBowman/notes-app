@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: notes-app
+productName: NotesPlus
 directories:
   buildResources: build
 files:

@@ -1,13 +1,16 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, globalShortcut, ipcMain, Menu, shell, Tray } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import { CreateNote, DeleteNote, GetNotes, ReadNote, WriteNote } from '../shared/types'
 import { createNote, deleteNote, getNotes, readNote, writeNote } from './lib'
 
+let mainWindow: BrowserWindow | null = null
+let tray: Tray | null = null
+
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -27,9 +30,9 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
+  // mainWindow.on('ready-to-show', () => {
+  //   mainWindow.show()
+  // })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
@@ -43,6 +46,14 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  mainWindow.on('ready-to-show', () => {
+    mainWindow?.show()
+  })
+
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
 }
 
 // This method will be called when Electron has finished
@@ -59,6 +70,29 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  // Create the tray icon
+  tray = new Tray(icon)
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show App',
+      click: () => {
+        if (mainWindow) {
+          mainWindow.show()
+        } else {
+          createWindow()
+        }
+      }
+    },
+    {
+      label: 'Quit',
+      click: () => {
+        app.quit()
+      }
+    }
+  ])
+  tray.setToolTip('Notes App')
+  tray.setContextMenu(contextMenu)
+
   // IPC test
   // ipcMain.on('ping', () => console.log('pong'))
 
@@ -67,6 +101,15 @@ app.whenReady().then(() => {
   ipcMain.handle('writeNote', (_, ...args: Parameters<WriteNote>) => writeNote(...args))
   ipcMain.handle('createNote', (_, ...args: Parameters<CreateNote>) => createNote(...args))
   ipcMain.handle('deleteNote', (_, ...args: Parameters<DeleteNote>) => deleteNote(...args))
+
+  // Register a global shortcut to open the app
+  globalShortcut.register('CommandOrControl+Shift+N', () => {
+    if (mainWindow) {
+      mainWindow.show()
+    } else {
+      createWindow()
+    }
+  })
 
   createWindow()
 
@@ -86,5 +129,9 @@ app.on('window-all-closed', () => {
   }
 })
 
+app.on('will-quit', () => {
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll()
+})
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

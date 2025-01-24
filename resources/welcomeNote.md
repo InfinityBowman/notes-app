@@ -1,6 +1,6 @@
-## Welcome to NoteMark 👋🏻
+## Welcome to Notes Plus 👋🏻
 
-NoteMark is a simple **note-taking app** that uses **Markdown** syntax to format your notes.
+Notes Plus is a simple **note-taking app** that uses **Markdown** syntax to format your notes.
 
 You can create your first note by clicking on the top-left icon on the sidebar, or delete one by clicking on top right icon.
 
@@ -13,7 +13,7 @@ This is an _italic_ text.
 
 ## Headings
 
-Here are all the heading formats currently supported by **_NoteMark_**:
+Here are all the heading formats currently supported by **_Notes Plus_**:
 
 # Heading 1
 

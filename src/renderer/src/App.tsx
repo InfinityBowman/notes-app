@@ -1,6 +1,5 @@
 import {
   ActionButtonsRow,
-  AssistBar,
   Content,
   DraggableTopBar,
   FloatingNoteTitle,
@@ -27,7 +26,7 @@ function App() {
         </Sidebar>
         <Content ref={contentContainerRef} className="border-l bg-zinc-900/50 border-l-white/20">
           <FloatingNoteTitle className="pt-1" />
-          <AssistBar className="border border-white/20" />
+          {/* <AssistBar className="border border-white/20" /> */}
           <MarkdownEditor />
         </Content>
       </RootLayout>
